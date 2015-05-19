@@ -64,7 +64,20 @@ class RoomMixin(object):
                 raise Exception("V2_TOKEN authentication failed with HipChat")
             rooms = resp.json()
 
-            for room in rooms["items"]:
+            print "--------------------------------------------------"
+            print "CONNECTING TO {0} ROOMS".format(len(rooms["items"]))
+            print "--------------------------------------------------"
+
+            room_list = []
+            for r in rooms["items"]:
+                if r['name'] in settings.ROOMS:
+                    room_list.append(r)
+
+            print "--------------------------------------------------"
+            print "Revised list TO {0} ROOMS".format(len(room_list))
+            print "--------------------------------------------------"
+
+            for room in room_list:
                 url = room["links"]["self"] + "?auth_token=%s;expand=xmpp_jid" % (settings.V2_TOKEN,)
                 room_details = requests.get(url, **settings.REQUESTS_OPTIONS).json()
                 # map missing hipchat API v1 data
